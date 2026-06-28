@@ -1,27 +1,17 @@
 import { Router } from 'express';
-import { notes } from '../db/notes.js';
 
 export const notesRouter = Router();
 
 notesRouter.get('/', (req, res) => {
-  res.json({
-    status: 200,
-    message: 'Successfully found notes!',
-    data: notes,
+  res.status(200).json({
+    message: 'Retrieved all notes',
   });
 });
 
-notesRouter.get('/:noteId', (req, res, next) => {
+notesRouter.get('/:noteId', (req, res) => {
   const { noteId } = req.params;
-  const note = notes.find((n) => n.id === noteId);
 
-  if (!note) {
-    return next(new Error(`Note with id ${noteId} not found`));
-  }
-
-  res.json({
-    status: 200,
-    message: `Successfully found note with id ${noteId}!`,
-    data: note,
+  res.status(200).json({
+    message: `Retrieved note with ID: ${noteId}`,
   });
 });

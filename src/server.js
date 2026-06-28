@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
 import dotenv from 'dotenv';
+
 import { notesRouter } from './routers/notes.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -17,8 +18,8 @@ export function startServer() {
 
   app.use('/notes', notesRouter);
 
-  app.get('/test-error', (req, res, next) => {
-    next(new Error('Test error'));
+  app.get('/test-error', () => {
+    throw new Error('Simulated server error');
   });
 
   app.use(notFoundHandler);
