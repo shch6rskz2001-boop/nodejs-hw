@@ -1,26 +1,25 @@
 import express from 'express';
 import cors from 'cors';
-import pinoHttp from 'pino-http';
 import dotenv from 'dotenv';
 
-import { notesRouter } from './routers/notes.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { errorHandler } from './middlewares/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { notesRouter } from './routes/notesRoutes.js';
 
 dotenv.config();
 
-export function startServer() {
+export async function startServer() {
+  await connectMongoDB();
+
   const app = express();
 
   app.use(cors());
   app.use(express.json());
-  app.use(pinoHttp());
+  app.use(logger);
 
   app.use('/notes', notesRouter);
-
-  app.get('/test-error', () => {
-    throw new Error('Simulated server error');
-  });
 
   app.use(notFoundHandler);
   app.use(errorHandler);
@@ -31,3 +30,5 @@ export function startServer() {
     console.log(`Server running on port ${PORT}`);
   });
 }
+
+
