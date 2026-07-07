@@ -1,25 +1,24 @@
 import express from 'express';
 import cors from 'cors';
-import pinoHttp from 'pino-http';
 import dotenv from 'dotenv';
-import { notesRouter } from './routers/notes.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { errorHandler } from './middlewares/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notesRouter } from './routes/notesRoutes.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
 
-export function startServer() {
+export async function startServer() {
+  await connectMongoDB();
+
   const app = express();
 
-  app.use(cors());
+  app.use(logger);
   app.use(express.json());
-  app.use(pinoHttp());
+  app.use(cors());
 
-  app.use('/notes', notesRouter);
-
-  app.get('/test-error', (req, res, next) => {
-    next(new Error('Test error'));
-  });
+  app.use(notesRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
