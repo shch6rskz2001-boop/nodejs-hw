@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { errors } from 'celebrate';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
 import { notesRouter } from './routes/notesRoutes.js';
@@ -20,6 +21,7 @@ export async function startServer() {
 
   app.use(notesRouter);
 
+  app.use(errors());
   app.use(notFoundHandler);
   app.use(errorHandler);
 
